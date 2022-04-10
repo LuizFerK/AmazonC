@@ -123,7 +123,7 @@ void delete(struct Node** head_ref) {
   }
 
   if (tmp == NULL) {
-    printf("\nProduct not found! Try again.\n");
+    printf("\nProduct not registered.\n");
     return;
   }
 
@@ -148,7 +148,7 @@ void find(struct Node** head_ref) {
   struct Node* found_node = search(head_ref, code);
 
   if (found_node == NULL) {
-    printf("\nProduct not found! Try again.\n");
+    printf("\nProduct not registered.\n");
     return;
   }
 
