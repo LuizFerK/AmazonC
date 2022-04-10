@@ -133,6 +133,31 @@ void delete(struct Node** head_ref) {
   free(tmp);
 }
 
+void find(struct Node** head_ref) {
+  int code;
+
+  if (*head_ref == NULL) {
+    printf("\nEmpty list!\n");
+    return;
+  }
+
+  printf("\nFind product\n");
+  printf("Code: ");
+  scanf("%d", &code);
+
+  struct Node* found_node = search(head_ref, code);
+
+  if (found_node == NULL) {
+    printf("\nProduct not found! Try again.\n");
+    return;
+  }
+
+  printf("\nProduct found\n");
+  printf("%d - ", found_node->product.code);
+  printf("%s, ", found_node->product.name);
+  printf("$%.2f\n", found_node->product.price);
+}
+
 void list(struct Node* head) {
   if (head == NULL) {
     printf("\nEmpty list!\n");
@@ -186,7 +211,7 @@ int main() {
 
     if (opt == 1) append(&head);
     else if (opt == 2) list(head);
-    else if (opt == 3) printf("\nFind\n\n");
+    else if (opt == 3) find(&head);
     else if (opt == 4) delete(&head);
     else if (opt == 5) printf("\nCart\n\n");
     else if (opt == 0) freeMemory(head);
