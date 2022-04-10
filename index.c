@@ -64,7 +64,7 @@ void append(struct Node** head_ref) {
   char name[30];
   float price;
 
-  printf("\nProduct\n");
+  printf("\nCreate product\n");
   printf("Code: ");
   scanf("%d", &code);
   printf("Name: ");
@@ -98,18 +98,71 @@ void append(struct Node** head_ref) {
   new_node->prev = last;
 }
 
+void delete(struct Node** head_ref) {
+  struct Node *tmp = *head_ref, *prev;
+  int code;
+
+  if (tmp == NULL) {
+    printf("\nEmpty list!\n");
+    return;
+  }
+
+  printf("\nDelete product\n");
+  printf("Code: ");
+  scanf("%d", &code);
+
+  if (tmp != NULL && tmp->product.code == code) {
+    *head_ref = tmp->next;
+    free(tmp);
+    return;
+  }
+
+  while (tmp != NULL && tmp->product.code != code) {
+    prev = tmp;
+    tmp = tmp->next;
+  }
+
+  if (tmp == NULL) {
+    printf("\nProduct not found! Try again.\n");
+    return;
+  }
+
+  printf("\n%s deleted from the product list.\n", tmp->product.name);
+  prev->next = tmp->next;
+
+  free(tmp);
+}
+
 void list(struct Node* head) {
   if (head == NULL) {
     printf("\nEmpty list!\n");
     return;
   }
 
+  printf("\nProduct list\n");
   while (head != NULL) {
     printf("%d - ", head->product.code);
     printf("%s, ", head->product.name);
     printf("$%.2f\n", head->product.price);
     head = head->next;
   }
+}
+
+void freeMemory(struct Node* head) {
+  struct Node *tmp;
+  int count = 0;
+
+  printf("\nThanks for the preference. Bye!\n");
+
+  while (head != NULL) {
+    tmp = head;
+    head = head->next;
+    free(tmp);
+    count++;
+  }
+
+  if (count > 1) printf("%d nodes has been freed from memory.\n", count);
+  else if (count > 0) printf("%d node has been freed from memory.\n", count);
 }
 
 int main() {
@@ -134,9 +187,9 @@ int main() {
     if (opt == 1) append(&head);
     else if (opt == 2) list(head);
     else if (opt == 3) printf("\nFind\n\n");
-    else if (opt == 4) printf("\nDelete\n\n");
+    else if (opt == 4) delete(&head);
     else if (opt == 5) printf("\nCart\n\n");
-    else if (opt == 0) printf("\nThanks for the preference. Bye!\n\n");
+    else if (opt == 0) freeMemory(head);
     else printf("\nPlease, select a valid option!\n\n");
   }
 
