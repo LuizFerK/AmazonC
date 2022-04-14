@@ -93,8 +93,8 @@ void append(struct Node** head_ref) {
   printf("Quantity in stock: ");
   scanf("%d", &qt_stock);
 
-  if (code == 0) {
-    printf("\n0 is not a valid product code! Try again.\n");
+  if (code <= 0) {
+    printf("\nPlease, select a valid product code.\n");
     return;
   }
 
