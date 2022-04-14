@@ -26,6 +26,7 @@ struct CNode {
   struct CNode* prev;
 };
 
+// Build a product struct
 struct Product build_product(
   int code,
   char *name,
@@ -42,6 +43,7 @@ struct Product build_product(
   return product;
 }
 
+// Find a product by the given ID
 struct Node* search(struct Node** head_ref, int code) {
   struct Node *head = *head_ref;
   struct Node* tmp = NULL;
@@ -57,6 +59,7 @@ struct Node* search(struct Node** head_ref, int code) {
   return tmp;
 }
 
+// Find a cart node by the given ID
 struct CNode* search_cart(struct CNode** cart_head_ref, int code) {
   struct CNode *cart_head = *cart_head_ref;
   struct CNode* tmp = NULL;
@@ -72,6 +75,7 @@ struct CNode* search_cart(struct CNode** cart_head_ref, int code) {
   return tmp;
 }
 
+// Add a product to the final of the product list
 void append(struct Node** head_ref) {
   struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
   struct Node* last = *head_ref;
@@ -118,6 +122,7 @@ void append(struct Node** head_ref) {
   new_node->prev = last;
 }
 
+// Delete a product from the product list
 void delete(struct Node** head_ref) {
   struct Node *tmp = *head_ref, *prev;
   int code;
@@ -131,6 +136,7 @@ void delete(struct Node** head_ref) {
   printf("Code: ");
   scanf("%d", &code);
 
+  // If the product is in the first position on the list
   if (tmp != NULL && tmp->product.code == code) {
     *head_ref = tmp->next;
     free(tmp);
@@ -153,6 +159,7 @@ void delete(struct Node** head_ref) {
   free(tmp);
 }
 
+// Find a product
 void find(struct Node** head_ref) {
   int code;
 
@@ -179,6 +186,7 @@ void find(struct Node** head_ref) {
   printf("(%d units in stock)\n", found_node->product.qt_stock);
 }
 
+// List products
 void list(struct Node* head) {
   if (head == NULL) {
     printf("\nEmpty list!\n");
@@ -195,9 +203,11 @@ void list(struct Node* head) {
   }
 }
 
+// Calculate the total cart price
 void total_price(struct Node* head, struct CNode* cart_head) {
   float total = 0;
 
+  // If there is no product on the cart
   if (cart_head == NULL) {
     printf("Your cart price: $0.00\n");
     return;
@@ -212,6 +222,7 @@ void total_price(struct Node* head, struct CNode* cart_head) {
   printf("Your cart price: $%.2f\n", total);
 }
 
+// Validate user purchase quantity
 int get_qt_buy(struct Product product) {
   int qt_buy;
 
@@ -237,6 +248,7 @@ int get_qt_buy(struct Product product) {
   return qt_buy;
 }
 
+// After add to cart, decrease product stock
 void update_product_stock(struct Node** head_ref, int code, int qt_buy) {
   struct Node *head = *head_ref;
 
@@ -249,6 +261,7 @@ void update_product_stock(struct Node** head_ref, int code, int qt_buy) {
   }
 }
 
+// After remove from cart, reset product stock
 void reset_product_stock(struct Node** head_ref, int code, int qt_buy) {
   struct Node *head = *head_ref;
 
@@ -261,17 +274,20 @@ void reset_product_stock(struct Node** head_ref, int code, int qt_buy) {
   }
 }
 
+// Add a product to the cart
 void append_to_cart(
   struct Node** head_ref,
   struct CNode** cart_head,
   struct Product product
 ) {
+  // Validate the user purchase quantity
   int qt_buy = get_qt_buy(product);
 
   if (qt_buy == 0) return;
 
   struct CNode* cart_node = search_cart(cart_head, product.code);
 
+  // If the product is already on the cart, sum the quantity
   if (cart_node != NULL) {
     cart_node->cart.qt_buy += qt_buy;
     return;
@@ -299,12 +315,14 @@ void append_to_cart(
     new_cart_node->prev = last;
   }
 
+  // Decrease product stock
   update_product_stock(head_ref, product.code, qt_buy);
 
   printf("\n%d units of %s has been added to your cart!\n", qt_buy, product.name);
 }
 
-void remove_product(
+//
+void remove_cart_product(
   struct Node** head_ref,
   struct CNode** cart_head_ref,
   int code,
@@ -329,9 +347,11 @@ void remove_product(
 
   free(tmp);
 
+  // Reset product stock
   reset_product_stock(head_ref, code, qt_buy);
 }
 
+// List the cart and let the user delete products from it
 void checkout(struct Node** head_ref, struct CNode** cart_head_ref) {
   int opt;
   int qt_buy = 0;
@@ -342,6 +362,7 @@ void checkout(struct Node** head_ref, struct CNode** cart_head_ref) {
     return;
   }
 
+  // Print cart
   printf("\nYour cart\n");
   while (tmp != NULL) {
     struct Node* found_node = search(head_ref, tmp->cart.codeprod);
@@ -354,12 +375,15 @@ void checkout(struct Node** head_ref, struct CNode** cart_head_ref) {
     tmp = tmp->next;
   }
 
+  // Reset tmp variable to reuse it
   tmp = *cart_head_ref;
 
+  // Let the user delete products from the cart
   printf("\nType the product code bellow to remove from cart (0 to return to main menu)\n");
   printf("Option: ");
   scanf("%d", &opt);
 
+  // Returns to main menu
   if (opt == 0) return;
 
   while (tmp != NULL) {
@@ -369,16 +393,19 @@ void checkout(struct Node** head_ref, struct CNode** cart_head_ref) {
     tmp = tmp->next;
   }
 
+  // Found no product, means the code is invalid
   if (qt_buy == 0) {
     printf("\nPlease, select a valid option.\n");
     checkout(head_ref, cart_head_ref);
     return;
   }
 
-  remove_product(head_ref, cart_head_ref, opt, qt_buy);
+  // Remove product from cart and call the function again
+  remove_cart_product(head_ref, cart_head_ref, opt, qt_buy);
   checkout(head_ref, cart_head_ref);
 }
 
+// Add products to cart by the given code and quantity
 void buy(struct Node** head_ref, struct CNode** cart_head_ref) {
   char code[2];
 
@@ -397,7 +424,10 @@ void buy(struct Node** head_ref, struct CNode** cart_head_ref) {
   printf("\nOption: ");
   scanf("%s", code);
 
+  // Return to main menu
   if (strcmp(code, "M") == 0) return;
+
+  // Print cart and let the user delete products from it
   if (strcmp(code, "C") == 0) {
     checkout(head_ref, cart_head_ref);
     return;
@@ -411,11 +441,12 @@ void buy(struct Node** head_ref, struct CNode** cart_head_ref) {
     return;
   }
 
+  // Add product to cart and call the function again
   append_to_cart(head_ref, cart_head_ref, found_node->product);
-
   buy(head_ref, cart_head_ref);
 }
 
+// Free memory from product and cart list
 void free_memory(struct Node* head, struct CNode* cart_head) {
   struct Node *tmp;
   struct CNode *c_tmp;
@@ -446,6 +477,7 @@ void free_memory(struct Node* head, struct CNode* cart_head) {
   else if (count > 0) printf("%d cart node has been freed from memory.\n", count);
 }
 
+// Main menu
 int main() {
   struct Node* head = NULL;
   struct CNode* cart_head = NULL;
