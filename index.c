@@ -89,6 +89,11 @@ void append(struct Node** head_ref) {
   printf("Quantity in stock: ");
   scanf("%d", &qt_stock);
 
+  if (code == 0) {
+    printf("\n0 is not a valid product code! Try again.\n");
+    return;
+  }
+
   struct Product product = build_product(code, name, price, qt_stock);
 
   struct Node* search_result = search(head_ref, code);
@@ -170,7 +175,8 @@ void find(struct Node** head_ref) {
   printf("\nProduct found\n");
   printf("%d - ", found_node->product.code);
   printf("%s, ", found_node->product.name);
-  printf("$%.2f\n", found_node->product.price);
+  printf("$%.2f ", found_node->product.price);
+  printf("(%d units in stock)\n", found_node->product.qt_stock);
 }
 
 void list(struct Node* head) {
@@ -309,6 +315,7 @@ void remove_product(
   if (tmp != NULL && tmp->cart.codeprod == code) {
     *cart_head_ref = tmp->next;
     free(tmp);
+    reset_product_stock(head_ref, code, qt_buy);
     return;
   }
 
@@ -444,7 +451,7 @@ int main() {
   struct CNode* cart_head = NULL;
   int opt;
 
-  printf("Welcome to AmazonCC!\n");
+  printf("Welcome to AmazonC!\n");
 
   while (opt != 0) {
     printf("\nMenu:\n");
